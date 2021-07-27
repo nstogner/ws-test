@@ -2,7 +2,17 @@
 
 Assert on HTTP request/response pairs.
 
-Expected directory structure:
+## Config
+
+Environment variables:
+
+- `TEST_URL` (required)
+- `TEST_DIRECTORY` (required)
+- `TEST_METHOD` (defaults to "POST")
+- `TEST_REQUEST_TIMEOUT` (defaults to "1s")
+- `TEST_SEARCH` (defaults to `**/request.*`)
+
+The default value for `TEST_SEARCH` results in an expected directory structure like:
 
 ```
 test-case-0/
@@ -15,15 +25,6 @@ test-case-n/
   request.json
   response.json
 ```
-
-## Config
-
-Environment variables:
-
-- `TEST_URL` (required)
-- `TEST_DIRECTORY` (required)
-- `TEST_METHOD` (defaults to "POST")
-- `TEST_REQUEST_TIMEOUT` (defaults to "1s")
 
 ## Usage
 

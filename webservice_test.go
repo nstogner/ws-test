@@ -15,9 +15,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestHelloWorld(t *testing.T) {
+func TestWebService(t *testing.T) {
 	var config struct {
 		Directory      string        `envconfig:"directory" required:"true"`
+		Search         string        `envconfig:"search" default:"**/request.*"`
 		URL            string        `envconfig:"url" required:"true"`
 		Method         string        `envconfig:"method" default:"POST"`
 		RequestTimeout time.Duration `envconfig:"request_timeout" default:"3s"`
@@ -26,11 +27,11 @@ func TestHelloWorld(t *testing.T) {
 	json.NewEncoder(os.Stdout).Encode(config)
 	client := &http.Client{Timeout: config.RequestTimeout}
 
-	requestFiles, err := filepath.Glob(filepath.Join(config.Directory, "**/request.*"))
+	requestFiles, err := filepath.Glob(filepath.Join(config.Directory, config.Search))
 	require.NoError(t, err)
 
 	for _, reqFile := range requestFiles {
-		t.Run(strings.TrimPrefix(filepath.Dir(reqFile), config.Directory), func(t *testing.T) {
+		t.Run(reqFile, func(t *testing.T) {
 			reqBody, err := ioutil.ReadFile(reqFile)
 			require.NoError(t, err)
 
