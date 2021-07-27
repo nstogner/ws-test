@@ -1,0 +1,28 @@
+name: Build and Push
+on:
+  push:
+    tags:
+      - v*
+env:
+  IMAGE_NAME: nstogner/ws-test
+jobs:
+  build-push-image:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get tag
+      id: vars
+      run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+    - name: Build the docker image
+      env:
+        TAG: ${{ steps.vars.outputs.tag }}
+      run: docker build . --file Dockerfile --tag $IMAGE_NAME:$TAG
+    - name: Login to Dockerhub
+      env:
+        DOCKER_USERNAME: nstogner
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - name: Push the Docker image
+      env:
+        TAG: ${{ steps.vars.outputs.tag }}
+      run: docker push $IMAGE_NAME:$TAG
